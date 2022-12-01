@@ -1,28 +1,22 @@
-import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
-import User from '../database/models/User';
+import { ILoginModel, ILoginService } from '../interfaces/LoginInterfaces';
+import { generateToken } from '../utils/jwtToken';
+import { validatePassword } from '../utils/validatePassword';
+import { ErrorHandler } from '../utils/errorHandlerUtil';
 
-const pass = 'jwt_secret';
-const jwtConfig = {
-  expiresIn: '7d',
-};
+require('express-async-errors');
 
-export default class GetUserInfo {
-  getInfo = async (email: string, password: string) => {
-    const userInfo = await User.findOne({ where: { email } });
+export default class LoginService implements ILoginService {
+  constructor(private model: ILoginModel) {
+    this.model = model;
+  }
 
-    if (!userInfo) {
-      return { code: 401, message: 'Incorrect email or password' };
-    }
+  async login(email: string, password: string): Promise<string> {
+    const user = await this.model.login(email);
 
-    const userPassValid = await bcrypt.compare(password, userInfo.password);
+    if (!user) throw new ErrorHandler(401, 'Incorrect email or password');
 
-    if (!userPassValid) {
-      return { code: 401, message: 'Incorrect email or password' };
-    }
+    validatePassword(password, user.password);
 
-    const jwToken = jwt.sign({ id: userInfo.id }, pass, jwtConfig);
-
-    return jwToken;
-  };
+    return generateToken(user);
+  }
 }
