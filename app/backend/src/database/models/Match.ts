@@ -9,6 +9,13 @@ class Match extends Model {
   awayTeam!: number;
   awayTeamGoals!: number;
   inProgress!: boolean;
+  teamHome?: {
+    teamName: string;
+  };
+
+  teamAway?: {
+    teamName: string;
+  };
 }
 
 Match.init({
@@ -50,7 +57,8 @@ Match.init({
   underscored: true,
   sequelize: db,
   timestamps: false,
-  modelName: 'matches',
+  modelName: 'Match',
+  tableName: 'matches',
 });
 
 Match.belongsTo(Team, { foreignKey: 'homeTeam', as: 'teamHome' });

@@ -8,26 +8,45 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      home_team: {
+      homeTeam: {
         allowNull: false,
-        type: Sequelize.STRING
+        foreignKey: true,
+        references: {
+          model: 'teams',
+          key: 'id',
+          },
+          onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+        type: Sequelize.INTEGER,
+        field: 'home_team',
       },
-      home_team_goals: {
+      homeTeamGoals: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        field: 'home_team_goals',
       },
-      away_team: {
+      awayTeam: {
         allowNull: false,
-        type: Sequelize.STRING
+        foreignKey: true,
+        references: {
+          model: 'teams',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+        type: Sequelize.INTEGER,
+        field: 'away_team',
       },
-      away_team_goals: {
+      awayTeamGoals: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        field: 'away_team_goals',
       },
-      in_progress: {
+      inProgress: {
         allowNull: false,
-        type: Sequelize.BOOLEAN
-      }
+        type: Sequelize.BOOLEAN,
+        field: 'in_progress',
+      },
     });
   },
   down: async (queryInterface, _Sequelize) => {
