@@ -1,7 +1,7 @@
 import { ILoginModel, ILoginService } from '../interfaces/LoginInterfaces';
 import { generateToken } from '../utils/jwtToken';
 import { validatePassword } from '../utils/validatePassword';
-import { ErrorHandler } from '../utils/errorHandlerUtil';
+import ErrorHandler from '../utils/errorHandlerUtil';
 
 require('express-async-errors');
 

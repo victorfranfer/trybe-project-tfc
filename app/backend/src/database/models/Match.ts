@@ -1,67 +1,50 @@
-import { Model, INTEGER, BOOLEAN } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import db from '.';
-import Team from './Team';
+import Teams from './Team';
 
-class Match extends Model {
-  id!: number;
-  homeTeam!: number;
-  homeTeamGoals!: number;
-  awayTeam!: number;
-  awayTeamGoals!: number;
-  inProgress!: boolean;
-  teamHome?: {
-    teamName: string;
-  };
-
-  teamAway?: {
-    teamName: string;
-  };
+export default class Matches extends Model {
+  public id!: number;
+  public homeTeam!: number;
+  public homeTeamGoals!: number;
+  public awayTeam!: number;
+  public awayTeamGoals!: number;
+  public inProgress!: number;
 }
 
-Match.init({
+Matches.init({
   id: {
+    type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false,
     autoIncrement: true,
-    type: INTEGER,
   },
   homeTeam: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    type: INTEGER,
-    references: {
-      model: 'teams',
-      key: 'id',
-    },
   },
   homeTeamGoals: {
-    allowNull: false,
-    type: INTEGER,
+    type: DataTypes.INTEGER,
   },
   awayTeam: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    type: INTEGER,
-    references: {
-      model: 'teams',
-      key: 'id',
-    },
   },
   awayTeamGoals: {
-    allowNull: false,
-    type: INTEGER,
+    type: DataTypes.INTEGER,
   },
   inProgress: {
-    allowNull: false,
-    type: BOOLEAN,
+    type: DataTypes.BOOLEAN,
   },
+
 }, {
-  underscored: true,
   sequelize: db,
+  modelName: 'Matches',
+  underscored: true,
   timestamps: false,
-  modelName: 'Match',
   tableName: 'matches',
 });
 
-Match.belongsTo(Team, { foreignKey: 'homeTeam', as: 'teamHome' });
-Match.belongsTo(Team, { foreignKey: 'awayTeam', as: 'teamAway' });
+Matches.belongsTo(Teams, { foreignKey: 'homeTeam', as: 'teamHome' });
+Matches.belongsTo(Teams, { foreignKey: 'awayTeam', as: 'teamAway' });
 
-export default Match;
+Teams.hasMany(Matches, { foreignKey: 'homeTeam', as: 'teamHome' });
+Teams.hasMany(Matches, { foreignKey: 'awayTeam', as: 'teamAway' });

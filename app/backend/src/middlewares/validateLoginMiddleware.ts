@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ErrorHandler } from '../utils/errorHandlerUtil';
+import ErrorHandler from '../utils/errorHandlerUtil';
 import emailRegex from '../utils/regexUtils';
 
 const validateLoginMiddleware = (req: Request, _res: Response, next: NextFunction): void => {

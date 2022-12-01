@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcryptjs';
-import { ErrorHandler } from './errorHandlerUtil';
+import ErrorHandler from './errorHandlerUtil';
 
 export const validatePassword = (password: string, hash: string) => {
   const validatePass = bcrypt.compareSync(password, hash);

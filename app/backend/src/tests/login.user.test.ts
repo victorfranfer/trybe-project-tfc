@@ -1,45 +1,84 @@
+import * as sinon from 'sinon';
 import * as chai from 'chai';
-// import * as sinon from 'sinon';
 // @ts-ignore
 import chaiHttp = require('chai-http');
+
+import { STATUS_BAD_REQUEST, STATUS_UNAUTHORIZED } from '../utils/httpStatusUtil';
+import { MSG_FIELDS_MISSING, MSG_INVALID_FIELDS } from '../utils/returnedMessagesUtils';
+
+import { MOCK_USER_ADMIN } from '../utils/mocksUtils';
+
 import { app } from '../app';
-// import User from '../database/models/User'
+import User from '../database/models/User';
+
+import { Response } from 'superagent';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
-const user = {
-    email: 'admin@admin.com',
-    password: 'secret_admin'
-}
+describe('Endpoint /login FAILED requisition', () => {
+  describe('Bad Request Errors', () => {
+    let chaiHttpResponse: Response;
 
+    it('Testa o email', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({ email: '', password: 'secret_admin' });
+      const { message } = chaiHttpResponse.body;
+      const { status } = chaiHttpResponse;
+      expect(message).to.equal(MSG_FIELDS_MISSING);
+      expect(status).to.equal(STATUS_BAD_REQUEST);
+    });
 
-describe('Testando a rota de login', () => {
-    describe('Verifique se o login é efeteudo com sucesso', () => {
-        it('Verifique se é possível fazer login e retornar um token', async () => {
-            const sucess = await chai.request(app).post('/login').send(user);
-            expect(sucess.body).to.have.property('token');
-            expect(sucess.status).to.be.equal(200);
-        })
-
-        it('Verifique não ser possível fazer login sem usuário/senha e se retorna um erro', async () => {
-            const failEmpty = await chai.request(app).post('/login').send({ 
-                email: '',
-                password: '' }); 
-            expect(failEmpty.status).to.be.equal(400)
-            expect(failEmpty.body).to.have.property('message')
-            expect(failEmpty.body.message).to.have.equal('All fields must be filled')
-        })
-
-        it('Verifique não ser possível logar com usuário/senha incorretos e se rotona um erro', async () => {
-            const wrong = await chai.request(app).post('/login').send({
-                email: 'casa@casa.com',
-                password: 'secret_casa'
-            });
-            expect(wrong.status).to.be.equal(401)
-            expect(wrong.body).to.have.property('message')
-            expect(wrong.body.message).to.have.equal('Incorrect email or password')
-        })
+    it('Testa o password', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({ email: 'admin@admin.com', password: '' });
+      const { message } = chaiHttpResponse.body;
+      const { status } = chaiHttpResponse;
+      expect(message).to.equal(MSG_FIELDS_MISSING);
+      expect(status).to.equal(STATUS_BAD_REQUEST);
     })
-})
+  });
+
+  describe('Unauthorized Errors', () => {
+    let chaiHttpResponse: Response;
+
+    beforeEach(async () => {
+      sinon
+        .stub(User, "findOne")
+        .resolves(MOCK_USER_ADMIN as User);
+    });
+
+    afterEach( () => {
+      (User.findOne as sinon.SinonStub).restore();
+    })
+
+    it('Email not found in database', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({ email: 'incorrect_email', password: 'secret_admin' });
+      const { message } = chaiHttpResponse.body;
+      const { status } = chaiHttpResponse;
+      expect(message).to.equal(MSG_INVALID_FIELDS);
+      expect(status).to.equal(STATUS_UNAUTHORIZED);
+    });
+
+    it('Password is incorrect', async () => {
+      chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({ email: 'admin@admin.com', password: 'incorrect_password' });
+      const { message } = chaiHttpResponse.body;
+      const { status } = chaiHttpResponse;
+      expect(message).to.equal(MSG_INVALID_FIELDS);
+      expect(status).to.equal(STATUS_UNAUTHORIZED);
+    });
+    
+  });
+
+});
