@@ -1,15 +1,15 @@
 import sequelize = require('sequelize');
 import MatchModel from '../database/models/Match';
 import TeamModel from '../database/models/Team';
-import { efficiency, points } from '../utils/leaderboardUtils';
+import { efficiencyAway, pointsAway } from '../utils/leaderboardUtils';
 
-export default class LeaderboardService {
+export default class LeaderboardAwayService {
   private model = MatchModel;
 
   async createLeaderboard() {
     const leaderboardAttributes = await this.model.findAll({ where: { inProgress: false },
       attributes: [
-        [sequelize.literal(points), 'points'],
+        [sequelize.literal(pointsAway), 'points'],
         [sequelize.fn('COUNT', sequelize.col('home_team')), 'games'],
         [sequelize.literal('SUM(home_team_goals > away_team_goals)'), 'wins'],
         [sequelize.literal('SUM(home_team_goals = away_team_goals)'), 'draws'],
@@ -17,7 +17,7 @@ export default class LeaderboardService {
         [sequelize.fn('SUM', sequelize.col('home_team_goals')), 'goals'],
         [sequelize.fn('SUM', sequelize.col('away_team_goals')), 'goalsOwn'],
         [sequelize.literal('SUM(home_team_goals - away_team_goals)'), 'balanceGoals'],
-        [sequelize.literal(efficiency), 'efficiency']],
+        [sequelize.literal(efficiencyAway), 'efficiency']],
       include: [{ model: TeamModel, as: 'teamHome', attributes: ['teamName'] }],
       group: ['home_team'],
       order: [
@@ -27,7 +27,7 @@ export default class LeaderboardService {
     return leaderboardAttributes;
   }
 
-  async getLeaderboard() {
+  async getLeaderboardAway() {
     const leaderboard = await this.createLeaderboard();
 
     const leaderboardSort = leaderboard.map((element) => ({
