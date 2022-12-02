@@ -2,6 +2,8 @@ import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { IUser } from '../interfaces/userInterface';
 
+export const SECRET = process.env.JWT_SECRET as string;
+
 dotenv.config();
 
 export const generateToken = (payload: Omit<IUser, 'password'>): string => {
@@ -11,5 +13,3 @@ export const generateToken = (payload: Omit<IUser, 'password'>): string => {
   });
   return token;
 };
-
-export default generateToken;
