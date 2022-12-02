@@ -52,4 +52,13 @@ export default class Match {
 
     return res.status(200).json({ message: 'Finished' });
   };
+
+  editMatch = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { homeTeamGoals, awayTeamGoals } = req.body;
+
+    const editedMatch = await this.matchService.editMatch(Number(id), homeTeamGoals, awayTeamGoals);
+
+    return res.status(200).json(editedMatch);
+  };
 }

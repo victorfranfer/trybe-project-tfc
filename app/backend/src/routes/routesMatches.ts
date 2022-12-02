@@ -10,7 +10,13 @@ const matchValidation = new MatchValidation();
 const router = Router();
 
 router.get('/', matchController.getAll);
-router.post('/', matchValidation.matchValid, matchController.createMatch);
+router.post(
+  '/',
+  matchValidation.matchValid,
+  matchValidation.userToken,
+  matchController.createMatch,
+);
 router.patch('/:id/finish', matchController.finishMatch);
+router.patch('/:id', matchController.editMatch);
 
 export default router;
