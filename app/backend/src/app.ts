@@ -33,6 +33,6 @@ class App {
   }
 }
 
-export { App };
+export default App;
 
 export const { app } = new App();
