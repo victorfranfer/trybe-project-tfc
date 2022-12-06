@@ -1,6 +1,6 @@
 import * as express from 'express';
-import errorMiddleware from './middlewares/errorMiddleware';
 import routes from './routes';
+import errorMiddleware from './middlewares/errorMiddleware';
 
 class App {
   public app: express.Express;
@@ -24,8 +24,8 @@ class App {
 
     this.app.use(express.json());
     this.app.use(accessControl);
-    this.app.use(routes);
     this.app.use(errorMiddleware);
+    this.app.use(routes);
   }
 
   public start(PORT: string | number):void {
@@ -33,6 +33,6 @@ class App {
   }
 }
 
-export default App;
+export { App };
 
 export const { app } = new App();
