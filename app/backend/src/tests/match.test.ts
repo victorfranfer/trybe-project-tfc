@@ -5,7 +5,7 @@ import chaiHttp = require('chai-http');
 import Matches from '../database/models/Match';
 import { app } from '../app';
 import { Response } from 'superagent';
-import matchMock from '../utils/matchMock';
+import { MOCK_MATCHES } from '../utils/mocksUtils';
 chai.use(chaiHttp);
 const { expect } = chai;
 
@@ -15,7 +15,7 @@ describe('Testa Maches', () => {
   beforeEach(async () => {
     sinon
       .stub(Matches, 'findAll')
-      .resolves(matchMock as any);
+      .resolves(MOCK_MATCHES as any);
   });
   afterEach(() => {
     (Matches.findAll as sinon.SinonStub).restore();
@@ -29,7 +29,7 @@ describe('Testa Maches', () => {
 
   const result = chaiHttpResponse.body;
   const { status } = chaiHttpResponse;
-  expect(result).to.deep.equals(matchMock);
+  expect(result).to.deep.equals(MOCK_MATCHES);
   expect(status).to.equals(200);
   });
 
