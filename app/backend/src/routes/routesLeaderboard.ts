@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import LeaderboardHomeService from '../services/servicesLeaderboardHome';
-import LeaderboardAwayService from '../services/servicesLeaderboardAway';
+// import LeaderboardHomeService from '../services/servicesLeaderboardHome';
+// import LeaderboardAwayService from '../services/servicesLeaderboardAway';
 import LeaderboardController from '../controllers/controllersLeaderboard';
 
-const leaderboardHomeService = new LeaderboardHomeService();
-const leaderboardHomeController = new LeaderboardController(leaderboardHomeService);
+// const leaderboardHomeService = new LeaderboardHomeService();
+const leaderboardHomeController = new LeaderboardController();
 
-const leaderboardAwayService = new LeaderboardAwayService();
-const leaderboardAwayController = new LeaderboardController(leaderboardAwayService);
+// const leaderboardAwayService = new LeaderboardAwayService();
+const leaderboardAwayController = new LeaderboardController();
 
 const router = Router();
 
